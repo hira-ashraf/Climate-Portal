@@ -159,6 +159,48 @@ def insert_sample_boundaries():
     conn.close()
     print(f"Inserted {len(provinces)} sample boundaries")
 
+def get_cached_climate_data(location_id, variable, date, aggregation='monthly'):
+    conn = sqlite3.connect(Config.DATABASE_PATH)
+    cursor = conn.cursor()
+    
+    cursor.execute('''
+        SELECT value FROM climate_cache
+        WHERE location_id = ? AND variable = ? AND date = ? AND aggregation = ?
+        AND created_at >= datetime('now', '-7 days')
+    ''', (location_id, variable, date, aggregation))
+    
+    result = cursor.fetchone()
+    conn.close()
+    
+    return result[0] if result else None
+
+def cache_climate_data(location_id, variable, date, value, aggregation='monthly'):
+    conn = sqlite3.connect(Config.DATABASE_PATH)
+    cursor = conn.cursor()
+    
+    cursor.execute('''
+        INSERT OR REPLACE INTO climate_cache (location_id, variable, date, value, aggregation)
+        VALUES (?, ?, ?, ?, ?)
+    ''', (location_id, variable, date, value, aggregation))
+    
+    conn.commit()
+    conn.close()
+
+def clean_old_cache(days=30):
+    conn = sqlite3.connect(Config.DATABASE_PATH)
+    cursor = conn.cursor()
+    
+    cursor.execute('''
+        DELETE FROM climate_cache
+        WHERE created_at < datetime('now', '-' || ? || ' days')
+    ''', (days,))
+    
+    conn.commit()
+    deleted_count = cursor.rowcount
+    conn.close()
+    
+    return deleted_count
+
 def rate_limit(max_requests=5, window=3600):
     def decorator(func):
         @wraps(func)
