@@ -12,9 +12,25 @@ class ClimateDataFetcher:
             try:
                 import ee
                 self.ee = ee
-                ee.Initialize(project=Config.GEE_PROJECT_ID)
+                
+                if Config.GEE_SERVICE_ACCOUNT and Config.GEE_PRIVATE_KEY:
+                    import json
+                    import tempfile
+                    
+                    key_data = json.loads(Config.GEE_PRIVATE_KEY)
+                    
+                    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+                        json.dump(key_data, f)
+                        key_file = f.name
+                    
+                    credentials = ee.ServiceAccountCredentials(Config.GEE_SERVICE_ACCOUNT, key_file)
+                    ee.Initialize(credentials)
+                    print("Google Earth Engine initialized with service account")
+                else:
+                    ee.Initialize(project=Config.GEE_PROJECT_ID)
+                    print("Google Earth Engine initialized with project ID")
+                
                 self.initialized = True
-                print("Google Earth Engine initialized successfully")
             except Exception as e:
                 print(f"Failed to initialize Google Earth Engine: {e}")
                 print("Falling back to mock data")
@@ -56,23 +72,31 @@ class ClimateDataFetcher:
         zonal_fc = boundaries.map(compute_mean)
         return zonal_fc
     
-    def extract_timeseries(self, variable, start_date, end_date, geometry):
+    def extract_timeseries(self, variable, start_date, end_date, geometry, aggregation='monthly'):
         if not self.initialized:
             return self.generate_mock_timeseries(variable, start_date, end_date)
         
         var_config = Config.CLIMATE_VARIABLES.get(variable, {})
         gee_band = var_config.get('gee_band', 'temperature_2m')
+        agg_config = Config.AGGREGATION_TYPES.get(aggregation, Config.AGGREGATION_TYPES['monthly'])
+        dataset = agg_config['dataset']
+        scale = agg_config['scale']
         
-        image_collection = self.ee.ImageCollection(Config.ERA5_MONTHLY_DATASET) \
+        image_collection = self.ee.ImageCollection(dataset) \
             .filterDate(start_date, end_date) \
             .select(gee_band)
+        
+        if aggregation == 'seasonal':
+            image_collection = self._aggregate_seasonal(image_collection, gee_band)
+        elif aggregation == 'annual':
+            image_collection = self._aggregate_annual(image_collection, gee_band)
         
         def extract_value(image):
             date = image.date().format('YYYY-MM-dd')
             value = image.reduceRegion(
                 reducer=self.ee.Reducer.mean(),
                 geometry=geometry,
-                scale=1000
+                scale=scale
             ).get(gee_band)
             
             scaled_value = self.ee.Number(value).multiply(var_config.get('scale_factor', 1)) \
@@ -95,6 +119,40 @@ class ClimateDataFetcher:
             })
         
         return data
+    
+    def _aggregate_seasonal(self, collection, band):
+        seasons = {
+            'Winter': [12, 1, 2],
+            'Spring': [3, 4, 5],
+            'Summer': [6, 7, 8],
+            'Fall': [9, 10, 11]
+        }
+        
+        seasonal_images = []
+        for season_name, months in seasons.items():
+            season_collection = collection.filter(
+                self.ee.Filter.calendarRange(months[0], months[-1], 'month')
+            )
+            if season_collection.size().getInfo() > 0:
+                seasonal_img = season_collection.mean().set('system:time_start', 
+                    season_collection.first().get('system:time_start'))
+                seasonal_images.append(seasonal_img)
+        
+        return self.ee.ImageCollection(seasonal_images)
+    
+    def _aggregate_annual(self, collection, band):
+        years = collection.aggregate_array('system:time_start').map(
+            lambda t: self.ee.Date(t).get('year')
+        ).distinct()
+        
+        def create_annual_image(year):
+            annual = collection.filter(
+                self.ee.Filter.calendarRange(year, year, 'year')
+            ).mean()
+            return annual.set('system:time_start', self.ee.Date.fromYMD(year, 1, 1).millis())
+        
+        annual_collection = self.ee.ImageCollection(years.map(create_annual_image))
+        return annual_collection
     
     def generate_mock_zonal_stats(self, variable):
         provinces = ['Punjab', 'Sindh', 'Khyber Pakhtunkhwa', 'Balochistan', 'Gilgit-Baltistan', 'Azad Kashmir']

@@ -29,6 +29,15 @@ class Config:
     
     ERA5_MONTHLY_DATASET = 'ECMWF/ERA5_LAND/MONTHLY_AGGR'
     ERA5_DAILY_DATASET = 'ECMWF/ERA5/DAILY'
+    ERA5_HOURLY_DATASET = 'ECMWF/ERA5_LAND/HOURLY'
+    
+    AGGREGATION_TYPES = {
+        'hourly': {'dataset': 'ECMWF/ERA5_LAND/HOURLY', 'scale': 11132},
+        'daily': {'dataset': 'ECMWF/ERA5/DAILY', 'scale': 27830},
+        'monthly': {'dataset': 'ECMWF/ERA5_LAND/MONTHLY_AGGR', 'scale': 11132},
+        'seasonal': {'dataset': 'ECMWF/ERA5_LAND/MONTHLY_AGGR', 'scale': 11132},
+        'annual': {'dataset': 'ECMWF/ERA5_LAND/MONTHLY_AGGR', 'scale': 11132}
+    }
     
     CLIMATE_VARIABLES = {
         'temperature': {

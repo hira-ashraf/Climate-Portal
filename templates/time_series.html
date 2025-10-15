@@ -40,6 +40,16 @@
         <input type="date" id="endDate" class="form-control">
     </div>
     <div class="col-md-2">
+        <label for="aggregationSelect" class="form-label">Aggregation</label>
+        <select id="aggregationSelect" class="form-select">
+            <option value="hourly">Hourly</option>
+            <option value="daily">Daily</option>
+            <option value="monthly" selected>Monthly</option>
+            <option value="seasonal">Seasonal</option>
+            <option value="annual">Annual</option>
+        </select>
+    </div>
+    <div class="col-md-2">
         <label class="form-label">&nbsp;</label>
         <button id="updateChart" class="btn btn-primary w-100">Update</button>
     </div>

@@ -5,10 +5,11 @@ async function updateTimeSeries() {
     const variable = document.getElementById('variableSelect').value;
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
+    const aggregation = document.getElementById('aggregationSelect')?.value || 'monthly';
     
     try {
         const response = await fetch(
-            `/api/timeseries?location_id=${location}&variable=${variable}&start=${startDate}&end=${endDate}`
+            `/api/timeseries?location_id=${location}&variable=${variable}&start=${startDate}&end=${endDate}&aggregation=${aggregation}`
         );
         const data = await response.json();
         

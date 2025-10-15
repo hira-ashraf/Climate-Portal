@@ -113,7 +113,7 @@ def get_timeseries():
             import ee
             pakistan_center = ee.Geometry.Point([69.3451, 30.3753])
             
-            data = data_fetcher.extract_timeseries(variable, start_date, end_date, pakistan_center)
+            data = data_fetcher.extract_timeseries(variable, start_date, end_date, pakistan_center, aggregation)
         except Exception as e:
             print(f"Error fetching real timeseries: {e}")
             data = data_fetcher.generate_mock_timeseries(variable, start_date, end_date)
