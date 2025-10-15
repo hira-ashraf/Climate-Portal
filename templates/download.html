@@ -58,12 +58,24 @@
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="formatSelect" class="form-label">Format</label>
-                        <select id="formatSelect" class="form-select" required>
-                            <option value="csv">CSV</option>
-                            <option value="json">JSON</option>
-                        </select>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="aggregationSelect" class="form-label">Aggregation</label>
+                            <select id="aggregationSelect" class="form-select" required>
+                                <option value="hourly">Hourly</option>
+                                <option value="daily">Daily</option>
+                                <option value="monthly" selected>Monthly</option>
+                                <option value="seasonal">Seasonal</option>
+                                <option value="annual">Annual</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="formatSelect" class="form-label">Format</label>
+                            <select id="formatSelect" class="form-select" required>
+                                <option value="csv">CSV</option>
+                                <option value="json">JSON</option>
+                            </select>
+                        </div>
                     </div>
 
                     <button type="submit" class="btn btn-primary">
@@ -120,6 +132,7 @@
         const variables = Array.from(document.querySelectorAll('.variable-check:checked')).map(cb => cb.value);
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
+        const aggregation = document.getElementById('aggregationSelect').value;
         const format = document.getElementById('formatSelect').value;
         
         if (variables.length === 0) {
@@ -141,6 +154,7 @@
                     variables: variables,
                     start_date: startDate,
                     end_date: endDate,
+                    aggregation: aggregation,
                     format: format
                 })
             });

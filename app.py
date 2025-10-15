@@ -210,23 +210,35 @@ def download_data():
     variables = data.get('variables', [])
     start_date = data.get('start_date', '2020-01-01')
     end_date = data.get('end_date', '2023-12-31')
+    aggregation = data.get('aggregation', 'monthly')
     format_type = data.get('format', 'csv')
     
     climate_data = []
     for variable in variables:
-        timeseries = data_fetcher.generate_mock_timeseries(variable, start_date, end_date)
+        if data_fetcher.initialized:
+            try:
+                import ee
+                pakistan_center = ee.Geometry.Point([69.3451, 30.3753])
+                timeseries = data_fetcher.extract_timeseries(variable, start_date, end_date, pakistan_center, aggregation)
+            except Exception as e:
+                print(f"Error fetching real data for download: {e}")
+                timeseries = data_fetcher.generate_mock_timeseries(variable, start_date, end_date)
+        else:
+            timeseries = data_fetcher.generate_mock_timeseries(variable, start_date, end_date)
+        
         for entry in timeseries:
             climate_data.append({
                 'date': entry['date'],
                 'variable': variable,
                 'value': entry['value'],
                 'location': location.get('id', 'unknown'),
+                'aggregation': aggregation,
                 'units': Config.CLIMATE_VARIABLES.get(variable, {}).get('unit', '')
             })
     
     if format_type == 'csv':
         output = io.StringIO()
-        writer = csv.DictWriter(output, fieldnames=['date', 'variable', 'value', 'location', 'units'])
+        writer = csv.DictWriter(output, fieldnames=['date', 'variable', 'value', 'location', 'aggregation', 'units'])
         writer.writeheader()
         writer.writerows(climate_data)
         
