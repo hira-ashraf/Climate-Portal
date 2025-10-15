@@ -2,6 +2,7 @@ import os
 import random
 from datetime import datetime, timedelta
 from config import Config
+from modules.utils import get_cached_climate_data, cache_climate_data
 
 class ClimateDataFetcher:
     def __init__(self):
@@ -72,7 +73,7 @@ class ClimateDataFetcher:
         zonal_fc = boundaries.map(compute_mean)
         return zonal_fc
     
-    def extract_timeseries(self, variable, start_date, end_date, geometry, aggregation='monthly'):
+    def extract_timeseries(self, variable, start_date, end_date, geometry, aggregation='monthly', location_id='pakistan_center'):
         if not self.initialized:
             return self.generate_mock_timeseries(variable, start_date, end_date)
         
@@ -113,31 +114,82 @@ class ClimateDataFetcher:
         data = []
         for feat in timeseries_info['features']:
             props = feat['properties']
-            data.append({
-                'date': props['date'],
-                'value': round(props['value'], 2) if props['value'] is not None else None
-            })
+            date_str = props['date']
+            value = props['value']
+            
+            cached_value = get_cached_climate_data(location_id, variable, date_str, aggregation)
+            
+            if cached_value is not None:
+                data.append({
+                    'date': date_str,
+                    'value': round(cached_value, 2)
+                })
+            else:
+                if value is not None:
+                    rounded_value = round(value, 2)
+                    cache_climate_data(location_id, variable, date_str, rounded_value, aggregation)
+                    data.append({
+                        'date': date_str,
+                        'value': rounded_value
+                    })
+                else:
+                    data.append({
+                        'date': date_str,
+                        'value': None
+                    })
         
         return data
     
     def _aggregate_seasonal(self, collection, band):
-        seasons = {
-            'Winter': [12, 1, 2],
-            'Spring': [3, 4, 5],
-            'Summer': [6, 7, 8],
-            'Fall': [9, 10, 11]
-        }
+        years = collection.aggregate_array('system:time_start').map(
+            lambda t: self.ee.Date(t).get('year')
+        ).distinct()
         
-        seasonal_images = []
-        for season_name, months in seasons.items():
-            season_collection = collection.filter(
-                self.ee.Filter.calendarRange(months[0], months[-1], 'month')
-            )
-            if season_collection.size().getInfo() > 0:
-                seasonal_img = season_collection.mean().set('system:time_start', 
-                    season_collection.first().get('system:time_start'))
-                seasonal_images.append(seasonal_img)
+        def create_seasonal_images(year):
+            year_start = self.ee.Date.fromYMD(year, 1, 1)
+            
+            winter_months = [12, 1, 2]
+            spring_months = [3, 4, 5]
+            summer_months = [6, 7, 8]
+            fall_months = [9, 10, 11]
+            
+            winter = collection.filter(
+                self.ee.Filter.Or(
+                    self.ee.Filter.And(
+                        self.ee.Filter.calendarRange(year.subtract(1), year.subtract(1), 'year'),
+                        self.ee.Filter.calendarRange(12, 12, 'month')
+                    ),
+                    self.ee.Filter.And(
+                        self.ee.Filter.calendarRange(year, year, 'year'),
+                        self.ee.Filter.calendarRange(1, 2, 'month')
+                    )
+                )
+            ).mean().set('system:time_start', year_start.advance(0, 'month').millis())
+            
+            spring = collection.filter(
+                self.ee.Filter.And(
+                    self.ee.Filter.calendarRange(year, year, 'year'),
+                    self.ee.Filter.calendarRange(3, 5, 'month')
+                )
+            ).mean().set('system:time_start', year_start.advance(3, 'month').millis())
+            
+            summer = collection.filter(
+                self.ee.Filter.And(
+                    self.ee.Filter.calendarRange(year, year, 'year'),
+                    self.ee.Filter.calendarRange(6, 8, 'month')
+                )
+            ).mean().set('system:time_start', year_start.advance(6, 'month').millis())
+            
+            fall = collection.filter(
+                self.ee.Filter.And(
+                    self.ee.Filter.calendarRange(year, year, 'year'),
+                    self.ee.Filter.calendarRange(9, 11, 'month')
+                )
+            ).mean().set('system:time_start', year_start.advance(9, 'month').millis())
+            
+            return [winter, spring, summer, fall]
         
+        seasonal_images = years.map(create_seasonal_images).flatten()
         return self.ee.ImageCollection(seasonal_images)
     
     def _aggregate_annual(self, collection, band):

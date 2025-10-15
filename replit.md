@@ -27,6 +27,10 @@ An academic research web application that democratizes climate data access for P
 - ✅ **NEW: Dark mode implemented with moon/sun toggle in navbar**
 - ✅ **NEW: Bilingual support added (English/Urdu) with language switcher**
 - ✅ **NEW: RTL support for Urdu with Noto Nastaliq Urdu font**
+- ✅ **NEW: Multiple temporal aggregations added (Hourly, Daily, Monthly, Seasonal, Annual)**
+- ✅ **NEW: Service account authentication support for Google Earth Engine**
+- ✅ **NEW: Database caching system for climate data (reduces API calls)**
+- ✅ **NEW: Enhanced download with aggregation options**
 
 ## System Architecture
 
