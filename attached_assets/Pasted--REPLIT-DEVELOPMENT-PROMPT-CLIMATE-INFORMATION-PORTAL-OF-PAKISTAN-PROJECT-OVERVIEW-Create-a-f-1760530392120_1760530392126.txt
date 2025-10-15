@@ -1,0 +1,516 @@
+# REPLIT DEVELOPMENT PROMPT: CLIMATE INFORMATION PORTAL OF PAKISTAN
+
+## PROJECT OVERVIEW
+
+Create a fully functional web-based Climate Information Portal for Pakistan using Python (Flask/FastAPI backend) and modern web technologies. This is an academic research project focused on democratizing climate data access through ERA5 reanalysis integration with Google Earth Engine visualization.
+
+---
+
+## CORE TECHNICAL REQUIREMENTS
+
+### **Technology Stack**
+
+- **Backend Framework:** Flask or FastAPI (Python 3.9+)
+- **Frontend:** HTML5, CSS3, JavaScript (vanilla or React.js if feasible)
+- **Mapping Library:** Leaflet.js for interactive maps
+- **Visualization:** Plotly.js for interactive charts and graphs
+- **Database:** SQLite (for development) or PostgreSQL with PostGIS (if available)
+- **Data Source:** Google Earth Engine Python API for ERA5 data access
+- **Caching:** Simple in-memory caching or Redis if available
+- **Styling:** Bootstrap or Tailwind CSS for responsive design
+
+### **Project Structure**
+
+```
+climate-portal/
+├── app.py                          # Main Flask/FastAPI application
+├── requirements.txt                # Python dependencies
+├── config.py                       # Configuration settings
+├── .env                            # Environment variables (GEE credentials)
+├── modules/
+│   ├── __init__.py
+│   ├── data_fetcher.py            # Google Earth Engine data retrieval
+│   ├── spatial_processor.py       # Spatial aggregation functions
+│   ├── ml_models.py               # Machine learning forecast models
+│   └── utils.py                   # Helper functions
+├── static/
+│   ├── css/
+│   │   └── style.css              # Custom styles
+│   ├── js/
+│   │   ├── map.js                 # Leaflet map initialization
+│   │   ├── charts.js              # Plotly chart functions
+│   │   └── main.js                # Main application logic
+│   └── data/
+│       └── pakistan_boundaries.geojson  # Administrative boundaries
+├── templates/
+│   ├── index.html                 # Main landing page
+│   ├── map_viewer.html            # Interactive map interface
+│   ├── time_series.html           # Time-series visualization
+│   ├── forecast.html              # ML forecast display
+│   ├── download.html              # Data download interface
+│   └── about.html                 # Documentation and help
+└── data/
+    └── climate_data.db            # SQLite database for cached data
+```
+
+---
+
+## DATASET SPECIFICATIONS
+
+### **Primary Data Source: ERA5 Reanalysis via Google Earth Engine**
+
+**Access Method:**
+
+```python
+import ee
+# Dataset: 'ECMWF/ERA5_LAND/MONTHLY_AGGR' for monthly aggregated data
+# OR: 'ECMWF/ERA5/DAILY' for daily data
+```
+
+**Climate Variables to Retrieve:**
+
+1. **Temperature:**
+    - 2m temperature (mean, maximum, minimum)
+    - Variable names: `temperature_2m`, `temperature_2m_max`, `temperature_2m_min`
+2. **Precipitation:**
+    - Total precipitation
+    - Variable name: `total_precipitation`
+3. **Humidity:**
+    - 2m dewpoint temperature (for relative humidity calculation)
+    - Variable name: `dewpoint_temperature_2m`
+4. **Wind:**
+    - 10m u and v wind components
+    - Variable names: `u_component_of_wind_10m`, `v_component_of_wind_10m`
+5. **Solar Radiation:**
+    - Surface solar radiation downwards
+    - Variable name: `surface_solar_radiation_downwards`
+
+**Spatial Coverage:**
+
+- Bounding box: Longitude [60.87°E to 77.84°E], Latitude [23.63°N to 37.13°N]
+- Pakistan's complete geographic extent
+
+**Temporal Coverage:**
+
+- Historical: 1979 to present (focus on 1991-2020 for climatology)
+- Update frequency: Monthly or as ERA5 updates permit
+- Aggregation levels: Daily, Monthly, Seasonal, Annual
+
+**Administrative Boundaries:**
+
+- Source: GADM (Global Administrative Areas) or Pakistan Bureau of Statistics
+- Levels: National (0), Provincial (1), District (2), Tehsil (3) if available
+- Format: GeoJSON for web display
+- Required attributes: `name`, `name_urdu`, `level`, `admin_code`
+
+---
+
+## FEATURE REQUIREMENTS
+
+### **FEATURE 1: Interactive Map Viewer (PRIORITY: CRITICAL)**
+
+**Description:** Main interface showing climate data on interactive map of Pakistan
+
+**Requirements:**
+
+- Initialize Leaflet map centered on Pakistan (coordinates: 30.3753°N, 69.3451°E, zoom level 5-6)
+- Base map options: OpenStreetMap, Satellite (if free tier available)
+- Administrative boundary overlay with district/province borders
+- Clickable polygons showing climate data on click
+- Layer control for toggling different climate variables
+- Color-coded choropleth maps based on climate values
+- Date/time period selector (specific month/year or date range)
+- Variable selector dropdown (Temperature, Precipitation, Humidity, Wind Speed, Solar Radiation)
+- Legend showing color scale with units
+- Loading indicators during data fetch
+- Responsive design (works on mobile, tablet, desktop)
+
+**Backend API Endpoint:**
+
+```python
+GET /api/map-data?variable=temperature&date=2024-01&level=district
+Response: GeoJSON with features containing climate values
+```
+
+**Implementation Notes:**
+
+- Use Google Earth Engine to fetch ERA5 data for selected date and variable
+- Perform zonal statistics (mean) for each administrative polygon
+- Return GeoJSON with properties including climate value, admin name, etc.
+- Cache results for common queries (last 6 months, major cities)
+
+---
+
+### **FEATURE 2: Time-Series Visualization (PRIORITY: CRITICAL)**
+
+**Description:** Line charts showing how climate variables change over time for selected locations
+
+**Requirements:**
+
+- Search or click location on map to select area of interest
+- Multi-variable plotting (compare temperature and precipitation on same chart)
+- Date range selector (start date to end date)
+- Aggregation level selector: Daily, Monthly, Seasonal, Annual
+- Interactive Plotly charts with zoom, pan, hover tooltips
+- Download chart as PNG image
+- Download data as CSV
+- Display climatological baseline (1991-present average) as reference line
+- Show anomalies (deviation from climatological mean)
+- Comparison mode: overlay multiple districts/provinces on same chart
+
+**Backend API Endpoint:**
+
+```python
+GET /api/timeseries?location_id=punjab_lahore&variable=temperature&start=2020-01-01&end=2024-12-31&aggregation=monthly
+Response: JSON array of {date: "YYYY-MM-DD", value: float}
+```
+
+**Implementation Notes:**
+
+- Query ERA5 via GEE for time series extraction
+- Use `ee.ImageCollection.filterDate()` and `reduceRegion()` for spatial aggregation
+- Calculate statistics: mean, min, max, standard deviation
+- Compute anomalies by subtracting climatological mean
+- Format response for easy Plotly consumption
+
+---
+
+### **FEATURE 3: Regional Comparison Tool (PRIORITY: HIGH)**
+
+**Description:** Side-by-side comparison of climate data across regions or time periods
+
+**Requirements:**
+
+- Select 2-4 districts/provinces for comparison
+- Display comparison as:
+    - Bar charts (compare specific months/years)
+    - Line charts (compare time series)
+    - Statistical summary table (mean, min, max, trend)
+- Calculate differences and percentage changes
+- Highlight significant differences
+- Export comparison results as PDF report or CSV
+
+**Backend API Endpoint:**
+
+```python
+POST /api/compare
+Request body: {
+  "locations": ["punjab_lahore", "sindh_karachi", "kpk_peshawar"],
+  "variable": "precipitation",
+  "time_period": "2023-01-01 to 2023-12-31"
+}
+Response: JSON with statistical comparison data
+```
+
+---
+
+### **FEATURE 4: Climate Data Download (PRIORITY: HIGH)**
+
+**Description:** Allow users to download climate datasets for offline analysis
+
+**Requirements:**
+
+- Form inputs:
+    - Select location (point coordinates, district, province, or custom polygon)
+    - Select variables (checkboxes for multiple selection)
+    - Select date range (start and end dates)
+    - Select aggregation (daily, monthly)
+    - Select format (CSV, JSON, NetCDF if possible)
+- Generate downloadable file on-demand
+- For large requests, queue job and provide download link when ready
+- Include metadata file explaining data structure, units, sources, citation
+- Rate limiting: max 5 downloads per hour per IP (to prevent abuse)
+
+**Backend API Endpoint:**
+
+```python
+POST /api/download
+Request body: {
+  "location": {"type": "district", "id": "punjab_lahore"},
+  "variables": ["temperature", "precipitation"],
+  "start_date": "2020-01-01",
+  "end_date": "2023-12-31",
+  "format": "csv"
+}
+Response: Stream file download OR {"job_id": "abc123", "status": "processing"}
+```
+
+**Implementation Notes:**
+
+- For small requests (<1000 records), generate file immediately
+- For large requests, use background processing (Celery if available, else simple queue)
+- Store generated files temporarily (24 hours) with unique URLs
+- CSV format: columns = date, variable_name, value, location_name, units
+
+---
+
+### **FEATURE 5: Machine Learning Climate Forecasts (PRIORITY: MEDIUM)**
+
+**Description:** Display short-term climate predictions using trained ML models
+
+**Requirements:**
+
+- Show 1-week to 3-month ahead forecasts for temperature and precipitation
+- Display as:
+    - Line chart with historical data + forecast continuation
+    - Confidence intervals (shaded area showing uncertainty range)
+    - Probability of exceeding thresholds (e.g., "75% chance of above-normal rainfall")
+- Model information: algorithm used, skill score, last updated date
+- Disclaimer: "Forecasts are probabilistic predictions with inherent uncertainty"
+- Update forecasts weekly or monthly as new data available
+
+**Backend Implementation:**
+
+- Train simple Random Forest or XGBoost models on historical ERA5 data
+- Input features: lagged variables (last 1, 3, 6 months), month of year, long-term trend
+- Output: predicted value + prediction interval (10th and 90th percentiles)
+- Store trained models as pickled files (joblib)
+- API endpoint serves predictions from cached results
+
+**Backend API Endpoint:**
+
+```python
+GET /api/forecast?location_id=punjab_lahore&variable=temperature&horizon=monthly
+Response: {
+  "forecast": [
+    {"date": "2025-01", "prediction": 15.3, "lower_bound": 12.1, "upper_bound": 18.5},
+    {"date": "2025-02", "prediction": 18.2, "lower_bound": 14.8, "upper_bound": 21.6}
+  ],
+  "model_info": {"algorithm": "Random Forest", "r2_score": 0.73, "last_trained": "2024-12-01"}
+}
+```
+
+**Simplified ML Implementation (if full ML too complex):**
+
+- Use persistence forecast (last value) + climatological adjustment
+- Calculate historical average for each month
+- Blend recent observation with climatological mean
+- Still useful baseline that performs reasonably well
+
+---
+
+### **FEATURE 6: Climate Statistics Dashboard (PRIORITY: MEDIUM)**
+
+**Description:** Summary page showing key climate indicators for Pakistan
+
+**Requirements:**
+
+- Current month's statistics:
+    - National average temperature (compare with normal)
+    - Total rainfall (compare with normal)
+    - Hottest and coldest districts
+    - Wettest and driest districts
+- Historical records:
+    - Warmest year on record
+    - Wettest monsoon season
+    - Longest dry spell
+- Interactive widgets:
+    - Temperature trend graph (annual average 1979-present)
+    - Precipitation variability graph
+    - Extreme event frequency (heatwaves, heavy rainfall days)
+- Auto-update monthly with new data
+
+**Backend API Endpoint:**
+
+```python
+GET /api/statistics/summary?period=current_month
+Response: JSON with all statistical summaries
+```
+
+---
+
+### **FEATURE 7: Educational Resources (PRIORITY: LOW - Can be simple text pages)**
+
+**Requirements:**
+
+- Glossary page: Define climate terms (precipitation, humidity, anomaly, etc.)
+- FAQ page: Common questions about portal and climate data
+- How-to guides: Step-by-step instructions with screenshots
+    - "How to view temperature trends for my district"
+    - "How to download climate data"
+    - "How to interpret forecast uncertainty"
+- Data sources page: Explain ERA5, GEE, attribution information
+- About page: Project description, contact information, citation guidelines
+
+**Implementation:**
+
+- Static HTML pages with styled content
+- Simple navigation from main menu
+- Bilingual content (English and Urdu) - at minimum English, Urdu as stretch goal
+
+---
+
+## GOOGLE EARTH ENGINE INTEGRATION
+
+### **Setup Requirements**
+
+```python
+# 1. Install Earth Engine API
+pip install earthengine-api
+
+# 2. Authenticate (one-time setup)
+import ee
+ee.Authenticate()  # Opens browser for authentication
+ee.Initialize(project='your-project-id')
+
+# 3. For production, use service account
+# Store service account JSON in environment variable
+# ee.Initialize(credentials=ee.ServiceAccountCredentials(email, key_file))
+```
+
+### **Key GEE Functions to Implement**
+
+**Function 1: Fetch Monthly Climate Data for Map Display**
+
+```python
+def fetch_era5_for_map(variable, year, month, bounds):
+    """
+    Fetch ERA5 data for specific variable and time period
+    
+    Args:
+        variable: 'temperature', 'precipitation', etc.
+        year: integer year
+        month: integer month (1-12)
+        bounds: ee.Geometry for Pakistan
+    
+    Returns:
+        ee.Image with selected variable
+    """
+    # Load ERA5 monthly data
+    era5 = ee.ImageCollection('ECMWF/ERA5_LAND/MONTHLY_AGGR')
+    
+    # Filter to specific month
+    date_start = ee.Date.fromYMD(year, month, 1)
+    date_end = date_start.advance(1, 'month')
+    
+    # Select variable and filter
+    image = era5.filterDate(date_start, date_end).select(variable).first()
+    
+    return image
+```
+
+**Function 2: Calculate Zonal Statistics for Administrative Units**
+
+```python
+def calculate_zonal_stats(image, boundaries, stat='mean'):
+    """
+    Calculate statistics for each administrative polygon
+    
+    Args:
+        image: ee.Image with climate data
+        boundaries: ee.FeatureCollection of admin boundaries
+        stat: 'mean', 'sum', 'min', 'max'
+    
+    Returns:
+        ee.FeatureCollection with statistics added as properties
+    """
+    def add_stat(feature):
+        # Calculate statistic within polygon
+        result = image.reduceRegion(
+            reducer=ee.Reducer.mean() if stat == 'mean' else ee.Reducer.sum(),
+            geometry=feature.geometry(),
+            scale=11132,  # ERA5-Land resolution ~11km
+            maxPixels=1e9
+        )
+        return feature.set(result)
+    
+    return boundaries.map(add_stat)
+```
+
+**Function 3: Extract Time Series for Location**
+
+```python
+def extract_timeseries(variable, start_date, end_date, geometry):
+    """
+    Extract time series of climate variable for specific location
+    
+    Args:
+        variable: climate variable name
+        start_date: 'YYYY-MM-DD'
+        end_date: 'YYYY-MM-DD'
+        geometry: ee.Geometry (point or polygon)
+    
+    Returns:
+        List of dictionaries [{date: ..., value: ...}, ...]
+    """
+    era5 = ee.ImageCollection('ECMWF/ERA5_LAND/MONTHLY_AGGR')
+    
+    filtered = era5.filterDate(start_date, end_date).select(variable)
+    
+    def extract_value(image):
+        value = image.reduceRegion(
+            reducer=ee.Reducer.mean(),
+            geometry=geometry,
+            scale=11132
+        ).get(variable)
+        
+        return ee.Feature(None, {
+            'date': image.date().format('YYYY-MM-dd'),
+            'value': value
+        })
+    
+    time_series = filtered.map(extract_value)
+    
+    # Convert to Python list
+    result = time_series.getInfo()
+    return [{'date': f['properties']['date'], 'value': f['properties']['value']} 
+            for f in result['features']]
+```
+
+### **GEE Best Practices**
+
+- Always filter spatially (`.filterBounds()`) before temporal filtering
+- Use appropriate scale parameter (11132m for ERA5-Land)
+- Implement caching for common queries (last month data for all districts)
+- Handle GEE timeouts gracefully with try-except blocks
+- Use `.getInfo()` sparingly; prefer server-side operations
+- For large computations, consider using `ee.batch.Export` to Google Drive then download
+
+---
+
+## DATABASE SCHEMA
+
+### **SQLite Tables (for development, can migrate to PostgreSQL later)**
+
+**Table 1: administrative_units**
+
+```sql
+CREATE TABLE administrative_units (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    name_urdu TEXT,
+    level INTEGER,  -- 0=national, 1=province, 2=district, 3=tehsil
+    parent_id INTEGER,
+    geometry TEXT,  -- GeoJSON string
+    centroid_lat REAL,
+    centroid_lon REAL,
+    area_km2 REAL,
+    FOREIGN KEY (parent_id) REFERENCES administrative_units(id)
+);
+```
+
+**Table 2: climate_cache**
+
+```sql
+CREATE TABLE climate_cache (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    location_id INTEGER,
+    variable TEXT,
+    date TEXT,  -- YYYY-MM-DD
+    value REAL,
+    aggregation TEXT,  -- 'daily', 'monthly', 'seasonal'
+    cached_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (location_id) REFERENCES administrative_units(id)
+);
+CREATE INDEX idx_cache_lookup ON climate_cache(location_id, variable, date);
+```
+
+**Table 3: ml_predictions**
+
+```sql
+CREATE TABLE ml_predictions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    location_id INTEGER,
+    variable TEXT,
+    forecast_date TEXT,  -- Date forec
+```

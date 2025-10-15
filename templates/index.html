@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 text-center mb-5">
+        <h1 class="display-4">Climate Information Portal of Pakistan</h1>
+        <p class="lead">Access and analyze climate data for Pakistan with interactive visualizations</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 feature-card">
+            <div class="card-body text-center">
+                <i class="fas fa-map fa-3x mb-3 text-primary"></i>
+                <h5 class="card-title">Interactive Map</h5>
+                <p class="card-text">Visualize climate data across Pakistan's provinces with color-coded choropleth maps.</p>
+                <a href="/map" class="btn btn-primary">View Map</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 feature-card">
+            <div class="card-body text-center">
+                <i class="fas fa-chart-line fa-3x mb-3 text-success"></i>
+                <h5 class="card-title">Time Series Analysis</h5>
+                <p class="card-text">Analyze climate trends over time with interactive charts and historical data.</p>
+                <a href="/timeseries" class="btn btn-success">Analyze Trends</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 feature-card">
+            <div class="card-body text-center">
+                <i class="fas fa-crystal-ball fa-3x mb-3 text-info"></i>
+                <h5 class="card-title">Climate Forecasts</h5>
+                <p class="card-text">View 3-month ahead climate predictions using machine learning models.</p>
+                <a href="/forecast" class="btn btn-info">View Forecasts</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 feature-card">
+            <div class="card-body text-center">
+                <i class="fas fa-download fa-3x mb-3 text-warning"></i>
+                <h5 class="card-title">Data Download</h5>
+                <p class="card-text">Download climate datasets in CSV or JSON format for offline analysis.</p>
+                <a href="/download" class="btn btn-warning">Download Data</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 feature-card">
+            <div class="card-body text-center">
+                <i class="fas fa-thermometer-half fa-3x mb-3 text-danger"></i>
+                <h5 class="card-title">Climate Variables</h5>
+                <p class="card-text">Temperature, precipitation, humidity, and wind speed data from ERA5 reanalysis.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 feature-card">
+            <div class="card-body text-center">
+                <i class="fas fa-info-circle fa-3x mb-3 text-secondary"></i>
+                <h5 class="card-title">Documentation</h5>
+                <p class="card-text">Learn about the data sources, methodology, and how to use the portal.</p>
+                <a href="/about" class="btn btn-secondary">Learn More</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <h5><i class="fas fa-lightbulb"></i> Quick Start</h5>
+            <p class="mb-0">The portal uses mock climate data by default. To enable real ERA5 data from Google Earth Engine, configure your GEE credentials in the secrets.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

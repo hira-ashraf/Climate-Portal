@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Climate Forecast - Climate Portal{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12">
+        <h2>Climate Forecasts</h2>
+        <p>Machine learning-based climate predictions for the next 3 months</p>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-4">
+        <label for="locationSelect" class="form-label">Location</label>
+        <select id="locationSelect" class="form-select">
+            <option value="punjab">Punjab</option>
+            <option value="sindh">Sindh</option>
+            <option value="kpk">Khyber Pakhtunkhwa</option>
+            <option value="balochistan">Balochistan</option>
+            <option value="gb">Gilgit-Baltistan</option>
+            <option value="ajk">Azad Kashmir</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label for="variableSelect" class="form-label">Variable</label>
+        <select id="variableSelect" class="form-select">
+            <option value="temperature">Temperature</option>
+            <option value="precipitation">Precipitation</option>
+            <option value="humidity">Humidity</option>
+            <option value="wind_speed">Wind Speed</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">&nbsp;</label>
+        <button id="updateForecast" class="btn btn-primary w-100">Generate Forecast</button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div id="forecastChart"></div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Model Information</h5>
+            </div>
+            <div class="card-body" id="modelInfo">
+                <p class="text-muted">Select a location and variable, then click "Generate Forecast" to see predictions.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}
