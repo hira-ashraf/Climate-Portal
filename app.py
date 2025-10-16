@@ -1,3 +1,12 @@
+# EARTH ENGINE INITIALIZATION - ADD THIS AT THE VERY TOP
+import ee
+try:
+    ee.Initialize()
+    print("✅ Earth Engine initialized successfully with personal account!")
+except Exception as e:
+    print(f"❌ Earth Engine initialization failed: {e}")
+    print("The app will run with mock data")
+
 from flask import Flask, render_template, jsonify, request, send_file
 from flask_cors import CORS
 from config import Config
