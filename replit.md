@@ -4,8 +4,8 @@
 
 An academic research web application that democratizes climate data access for Pakistan through ERA5 reanalysis integration with Google Earth Engine. The portal provides interactive visualization, time series analysis, and machine learning-based forecasting of climate variables (temperature, precipitation, humidity, wind speed) across Pakistan's administrative regions.
 
-**Status:** ✅ Fully implemented and operational (October 15, 2025)
-**Latest Update:** Complete implementation from GitHub import - all modules, templates, and static assets created and tested
+**Status:** ✅ Fully implemented and operational (October 16, 2025)
+**Latest Update:** Migrated map visualization from Leaflet to geemap/folium for professional GIS interface
 
 ## User Preferences
 
@@ -14,8 +14,12 @@ An academic research web application that democratizes climate data access for P
 - **Dark Mode**: Required and implemented with localStorage persistence
 - **Language Support**: Bilingual English/Urdu with RTL support
 
-## Recent Changes (October 15, 2025)
+## Recent Changes (October 16, 2025)
 
+- ✅ **LATEST: Replaced Leaflet with geemap/folium for professional GIS portal interface**
+- ✅ **LATEST: Added GeeMapHelper module for Earth Engine and folium map generation**
+- ✅ **LATEST: Implemented dual-path visualization (EE with colorbar when configured, folium fallback)**
+- ✅ **LATEST: Color-coded choropleth maps with interactive tooltips and legends**
 - ✅ Complete application built from scratch based on detailed requirements
 - ✅ All critical features implemented: interactive maps, time series, forecasts, data download
 - ✅ Database initialization happens automatically on startup
@@ -23,14 +27,14 @@ An academic research web application that democratizes climate data access for P
 - ✅ Comprehensive documentation added (README.md)
 - ✅ All API endpoints tested and working
 - ✅ Frontend fully responsive with Bootstrap 5
-- ✅ **NEW: Interface redesigned with green forest/emerald color palette**
-- ✅ **NEW: Dark mode implemented with moon/sun toggle in navbar**
-- ✅ **NEW: Bilingual support added (English/Urdu) with language switcher**
-- ✅ **NEW: RTL support for Urdu with Noto Nastaliq Urdu font**
-- ✅ **NEW: Multiple temporal aggregations added (Hourly, Daily, Monthly, Seasonal, Annual)**
-- ✅ **NEW: Service account authentication support for Google Earth Engine**
-- ✅ **NEW: Database caching system for climate data (reduces API calls)**
-- ✅ **NEW: Enhanced download with aggregation options**
+- ✅ Interface redesigned with green forest/emerald color palette
+- ✅ Dark mode implemented with moon/sun toggle in navbar
+- ✅ Bilingual support added (English/Urdu) with language switcher
+- ✅ RTL support for Urdu with Noto Nastaliq Urdu font
+- ✅ Multiple temporal aggregations added (Hourly, Daily, Monthly, Seasonal, Annual)
+- ✅ Service account authentication support for Google Earth Engine
+- ✅ Database caching system for climate data (reduces API calls)
+- ✅ Enhanced download with aggregation options
 
 ## System Architecture
 
@@ -43,6 +47,7 @@ An academic research web application that democratizes climate data access for P
   - `ClimateDataFetcher`: Google Earth Engine integration for ERA5 climate data retrieval
   - `SpatialProcessor`: Geographic boundary management and spatial aggregation
   - `ClimateForecaster`: Random Forest-based ML forecasting with 3-month horizon
+  - `GeeMapHelper`: Professional GIS map generation using geemap and folium
   - `utils`: Database helpers, rate limiting, and shared utilities
 
 **Design Rationale**: Modular separation enables independent testing and maintenance of climate data fetching, spatial processing, and forecasting capabilities. Flask chosen for simplicity and academic research context over FastAPI.
@@ -53,11 +58,11 @@ An academic research web application that democratizes climate data access for P
 - **Templates**: Jinja2-based HTML templates for each major feature (map viewer, time series, forecasts, data download)
 - **Styling**: Bootstrap 5 for responsive design with custom CSS
 - **Visualization Libraries**:
-  - Leaflet.js for interactive choropleth maps
+  - **geemap/folium** for professional GIS-style interactive maps with Earth Engine integration
   - Plotly.js for time series charts and forecast visualizations
 - **JavaScript**: Vanilla JS organized by feature (map.js, charts.js, main.js)
 
-**Design Rationale**: MPA approach chosen over SPA for simplicity and SEO benefits. Each page is self-contained with specific functionality. No frontend framework needed given the relatively simple interactivity requirements.
+**Design Rationale**: MPA approach chosen over SPA for simplicity and SEO benefits. Geemap provides professional GIS interface with dual-path rendering: Earth Engine layers with colorbars when credentials are configured, graceful folium fallback with mock data otherwise. Each page is self-contained with specific functionality.
 
 ### Data Storage
 
