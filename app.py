@@ -36,7 +36,7 @@ def map_viewer():
     
     climate_map = geemap_helper.create_climate_map(variable, year, month)
     
-    map_html = climate_map.to_html()
+    map_html = geemap_helper.to_html(climate_map)
     
     return render_template('map_viewer.html', map_html=map_html, variable=variable, date=date_str)
 
