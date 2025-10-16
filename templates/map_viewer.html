@@ -6,7 +6,7 @@
 <div class="row mb-3">
     <div class="col-12">
         <h2>Interactive Climate Map</h2>
-        <p>Select a climate variable and date to visualize data across Pakistan</p>
+        <p>Select a climate variable and date to visualize Earth Engine data across Pakistan</p>
     </div>
 </div>
 
@@ -14,15 +14,15 @@
     <div class="col-md-4">
         <label for="variableSelect" class="form-label">Climate Variable</label>
         <select id="variableSelect" class="form-select">
-            <option value="temperature">Temperature (°C)</option>
-            <option value="precipitation">Precipitation (mm)</option>
-            <option value="humidity">Humidity (%)</option>
-            <option value="wind_speed">Wind Speed (m/s)</option>
+            <option value="temperature" {% if variable == 'temperature' %}selected{% endif %}>Temperature (°C)</option>
+            <option value="precipitation" {% if variable == 'precipitation' %}selected{% endif %}>Precipitation (mm)</option>
+            <option value="humidity" {% if variable == 'humidity' %}selected{% endif %}>Humidity (%)</option>
+            <option value="wind_speed" {% if variable == 'wind_speed' %}selected{% endif %}>Wind Speed (m/s)</option>
         </select>
     </div>
     <div class="col-md-4">
         <label for="dateSelect" class="form-label">Date (Year-Month)</label>
-        <input type="month" id="dateSelect" class="form-control" value="2024-01">
+        <input type="month" id="dateSelect" class="form-control" value="{{ date }}">
     </div>
     <div class="col-md-4">
         <label class="form-label">&nbsp;</label>
@@ -32,16 +32,24 @@
 
 <div class="row">
     <div class="col-12">
-        <div id="map" style="height: 600px; border-radius: 8px;"></div>
+        <div id="mapContainer" style="height: 650px; border-radius: 8px; overflow: hidden;">
+            {{ map_html|safe }}
+        </div>
     </div>
 </div>
 
 <div class="row mt-3">
     <div class="col-12">
-        <div id="legendContainer" class="card">
+        <div class="card">
             <div class="card-body">
-                <h6>Legend</h6>
-                <div id="legend"></div>
+                <h6>About This Map</h6>
+                <p>This interactive map uses <strong>geemap</strong> and <strong>Google Earth Engine</strong> to visualize climate data from ERA5 reanalysis dataset. Use the controls above to change variables and time periods.</p>
+                <ul>
+                    <li>Pan and zoom using your mouse or touch gestures</li>
+                    <li>Toggle layers using the layer control in the top-right corner</li>
+                    <li>Switch between map types (Satellite, Terrain, etc.)</li>
+                    <li>View the colorbar legend for data values</li>
+                </ul>
             </div>
         </div>
     </div>
@@ -49,5 +57,11 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{{ url_for('static', filename='js/map.js') }}"></script>
+<script>
+document.getElementById('updateMap').addEventListener('click', function() {
+    const variable = document.getElementById('variableSelect').value;
+    const date = document.getElementById('dateSelect').value;
+    window.location.href = `/map?variable=${variable}&date=${date}`;
+});
+</script>
 {% endblock %}

@@ -1,7 +1,7 @@
 from flask import Flask, render_template, jsonify, request, send_file
 from flask_cors import CORS
 from config import Config
-from modules import ClimateDataFetcher, SpatialProcessor, ClimateForecaster
+from modules import ClimateDataFetcher, SpatialProcessor, ClimateForecaster, GeeMapHelper
 from modules.utils import create_database, insert_sample_boundaries, rate_limit
 import json
 from datetime import datetime
@@ -18,6 +18,7 @@ insert_sample_boundaries()
 data_fetcher = ClimateDataFetcher()
 spatial_processor = SpatialProcessor()
 forecaster = ClimateForecaster()
+geemap_helper = GeeMapHelper(data_fetcher)
 
 @app.route('/')
 def index():
@@ -25,7 +26,19 @@ def index():
 
 @app.route('/map')
 def map_viewer():
-    return render_template('map_viewer.html')
+    variable = request.args.get('variable', 'temperature')
+    date_str = request.args.get('date', datetime.now().strftime('%Y-%m'))
+    
+    try:
+        year, month = map(int, date_str.split('-'))
+    except:
+        year, month = datetime.now().year, datetime.now().month
+    
+    climate_map = geemap_helper.create_climate_map(variable, year, month)
+    
+    map_html = climate_map.to_html()
+    
+    return render_template('map_viewer.html', map_html=map_html, variable=variable, date=date_str)
 
 @app.route('/timeseries')
 def timeseries():
