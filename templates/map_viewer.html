@@ -2,56 +2,63 @@
 
 {% block title %}Map Viewer - Climate Portal{% endblock %}
 
-{% block content %}
-<div class="row mb-3">
-    <div class="col-12">
-        <h2>Interactive Climate Map</h2>
-        <p>Select a climate variable and date to visualize Earth Engine data across Pakistan</p>
-    </div>
-</div>
-
-<div class="row mb-3">
-    <div class="col-md-4">
-        <label for="variableSelect" class="form-label">Climate Variable</label>
+{% block sidebar_controls %}
+<div class="controls-section" style="border-top: 1px solid rgba(0,0,0,0.08);">
+    <h6 class="control-label" style="font-size: 0.875rem; margin-bottom: 1.5rem;">
+        <i class="fas fa-sliders-h"></i> Map Controls
+    </h6>
+    
+    <div class="control-group">
+        <label for="variableSelect" class="control-label">Climate Variable</label>
         <select id="variableSelect" class="form-select">
-            <option value="temperature" {% if variable == 'temperature' %}selected{% endif %}>Temperature (°C)</option>
-            <option value="precipitation" {% if variable == 'precipitation' %}selected{% endif %}>Precipitation (mm)</option>
-            <option value="humidity" {% if variable == 'humidity' %}selected{% endif %}>Humidity (%)</option>
-            <option value="wind_speed" {% if variable == 'wind_speed' %}selected{% endif %}>Wind Speed (m/s)</option>
+            <option value="temperature" {% if variable == 'temperature' %}selected{% endif %}>🌡️ Temperature (°C)</option>
+            <option value="precipitation" {% if variable == 'precipitation' %}selected{% endif %}>🌧️ Precipitation (mm)</option>
+            <option value="humidity" {% if variable == 'humidity' %}selected{% endif %}>💧 Humidity (%)</option>
+            <option value="wind_speed" {% if variable == 'wind_speed' %}selected{% endif %}>💨 Wind Speed (m/s)</option>
         </select>
     </div>
-    <div class="col-md-4">
-        <label for="dateSelect" class="form-label">Date (Year-Month)</label>
+    
+    <div class="control-group">
+        <label for="dateSelect" class="control-label">Date (Year-Month)</label>
         <input type="month" id="dateSelect" class="form-control" value="{{ date }}">
     </div>
-    <div class="col-md-4">
-        <label class="form-label">&nbsp;</label>
-        <button id="updateMap" class="btn btn-primary w-100">Update Map</button>
+    
+    <div class="control-group">
+        <button id="updateMap" class="btn btn-primary w-100">
+            <i class="fas fa-sync-alt"></i>
+            <span>Update Map</span>
+        </button>
+    </div>
+    
+    <div class="control-group" style="padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.08);">
+        <h6 class="control-label" style="font-size: 0.875rem; margin-bottom: 0.75rem;">
+            <i class="fas fa-info-circle"></i> Map Features
+        </h6>
+        <ul style="font-size: 0.875rem; color: var(--text-muted-light); line-height: 1.8; padding-left: 1.25rem; margin: 0;">
+            <li>Pan & zoom with mouse</li>
+            <li>Layer controls (top-right)</li>
+            <li>Switch map types</li>
+            <li>View data legends</li>
+        </ul>
     </div>
 </div>
+{% endblock %}
 
-<div class="row">
-    <div class="col-12">
-        <div id="mapContainer" style="height: 650px; border-radius: 8px; overflow: hidden;">
-            {{ map_html|safe }}
+{% block content_header %}
+<div class="content-header">
+    <div class="header-top">
+        <div class="header-title">
+            <h2>Interactive Climate Map</h2>
+            <p class="header-subtitle">Visualize Earth Engine climate data across Pakistan's regions</p>
         </div>
     </div>
 </div>
+{% endblock %}
 
-<div class="row mt-3">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <h6>About This Map</h6>
-                <p>This interactive map uses <strong>geemap</strong> and <strong>Google Earth Engine</strong> to visualize climate data from ERA5 reanalysis dataset. Use the controls above to change variables and time periods.</p>
-                <ul>
-                    <li>Pan and zoom using your mouse or touch gestures</li>
-                    <li>Toggle layers using the layer control in the top-right corner</li>
-                    <li>Switch between map types (Satellite, Terrain, etc.)</li>
-                    <li>View the colorbar legend for data values</li>
-                </ul>
-            </div>
-        </div>
+{% block content %}
+<div class="map-container">
+    <div id="mapContainer" style="width: 100%; height: 100%; border-radius: 16px; overflow: hidden;">
+        {{ map_html|safe }}
     </div>
 </div>
 {% endblock %}
@@ -61,7 +68,21 @@
 document.getElementById('updateMap').addEventListener('click', function() {
     const variable = document.getElementById('variableSelect').value;
     const date = document.getElementById('dateSelect').value;
+    
+    // Show loading state
+    const btn = this;
+    const originalHTML = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Loading...</span>';
+    
     window.location.href = `/map?variable=${variable}&date=${date}`;
+});
+
+// Update map on Enter key in date field
+document.getElementById('dateSelect').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        document.getElementById('updateMap').click();
+    }
 });
 </script>
 {% endblock %}

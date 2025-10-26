@@ -2,49 +2,67 @@
 
 {% block title %}About - Climate Portal{% endblock %}
 
-{% block content %}
-<div class="row">
-    <div class="col-12">
-        <h2>About the Climate Information Portal</h2>
-        <p class="lead">Democratizing climate data access for Pakistan through interactive visualization and analysis</p>
+{% block content_header %}
+<div class="content-header">
+    <div class="header-top">
+        <div class="header-title">
+            <h2>About the Portal</h2>
+            <p class="header-subtitle">Democratizing climate data access for Pakistan</p>
+        </div>
     </div>
 </div>
+{% endblock %}
 
-<div class="row mt-4">
-    <div class="col-md-6">
-        <h4>Overview</h4>
-        <p>The Climate Information Portal of Pakistan is an academic research project that provides access to climate data through an interactive web-based platform. The portal integrates ERA5 reanalysis data from Google Earth Engine to offer comprehensive climate information for Pakistan's administrative regions.</p>
-        
-        <h4 class="mt-4">Features</h4>
-        <ul>
-            <li>Interactive map visualization with choropleth coloring</li>
-            <li>Time series analysis with Plotly charts</li>
-            <li>Machine learning-based climate forecasts (3-month horizon)</li>
-            <li>Data download capabilities (CSV/JSON)</li>
-            <li>Coverage of temperature, precipitation, humidity, and wind speed</li>
-        </ul>
+{% block content %}
+<div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> <strong>Note:</strong> This application is designed for research and educational purposes. The portal works with mock data by default. To access real ERA5 climate data, configure your Google Earth Engine credentials.
     </div>
     
-    <div class="col-md-6">
-        <h4>Technology Stack</h4>
-        <ul>
-            <li><strong>Backend:</strong> Flask (Python 3.11+)</li>
-            <li><strong>Frontend:</strong> HTML5, CSS3, JavaScript</li>
-            <li><strong>Mapping:</strong> Leaflet.js</li>
-            <li><strong>Visualization:</strong> Plotly.js</li>
-            <li><strong>Database:</strong> SQLite</li>
-            <li><strong>Data Source:</strong> Google Earth Engine (ERA5)</li>
-            <li><strong>ML:</strong> Scikit-learn (Random Forest)</li>
-        </ul>
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card">
+                <h5 style="font-weight: 700; margin-bottom: 1rem;">
+                    <i class="fas fa-info-circle" style="color: var(--primary-color);"></i> Overview
+                </h5>
+                <p style="line-height: 1.7;">The Climate Information Portal of Pakistan is an academic research project that provides access to climate data through an interactive web-based platform. The portal integrates ERA5 reanalysis data from Google Earth Engine to offer comprehensive climate information for Pakistan's administrative regions.</p>
+                
+                <h6 style="font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem;">Features</h6>
+                <ul style="line-height: 1.8;">
+                    <li>Interactive map visualization with choropleth coloring</li>
+                    <li>Time series analysis with Plotly charts</li>
+                    <li>Machine learning-based climate forecasts (3-month horizon)</li>
+                    <li>Data download capabilities (CSV/JSON)</li>
+                    <li>Coverage of temperature, precipitation, humidity, and wind speed</li>
+                </ul>
+            </div>
+        </div>
         
-        <h4 class="mt-4">Data Source</h4>
-        <p><strong>ERA5 Reanalysis</strong>: The fifth generation ECMWF atmospheric reanalysis providing hourly estimates of atmospheric, land, and oceanic climate variables from 1979 to present.</p>
+        <div class="col-lg-6">
+            <div class="card">
+                <h5 style="font-weight: 700; margin-bottom: 1rem;">
+                    <i class="fas fa-code" style="color: var(--secondary-color);"></i> Technology Stack
+                </h5>
+                <ul style="line-height: 1.8;">
+                    <li><strong>Backend:</strong> Flask (Python 3.11+)</li>
+                    <li><strong>Frontend:</strong> HTML5, CSS3, JavaScript</li>
+                    <li><strong>Mapping:</strong> Leaflet.js</li>
+                    <li><strong>Visualization:</strong> Plotly.js</li>
+                    <li><strong>Database:</strong> SQLite</li>
+                    <li><strong>Data Source:</strong> Google Earth Engine (ERA5)</li>
+                    <li><strong>ML:</strong> Scikit-learn (Random Forest)</li>
+                </ul>
+                
+                <h6 style="font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem;">Data Source</h6>
+                <p style="line-height: 1.7;"><strong>ERA5 Reanalysis:</strong> The fifth generation ECMWF atmospheric reanalysis providing hourly estimates of atmospheric, land, and oceanic climate variables from 1979 to present.</p>
+            </div>
+        </div>
     </div>
-</div>
-
-<div class="row mt-4">
-    <div class="col-12">
-        <h4>Climate Variables</h4>
+    
+    <div class="card">
+        <h5 style="font-weight: 700; margin-bottom: 1rem;">
+            <i class="fas fa-cloud" style="color: var(--accent-color);"></i> Climate Variables
+        </h5>
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
@@ -57,38 +75,38 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Temperature</td>
+                        <td>🌡️ Temperature</td>
                         <td>2-meter air temperature</td>
                         <td>°C</td>
-                        <td>temperature_2m</td>
+                        <td><code>temperature_2m</code></td>
                     </tr>
                     <tr>
-                        <td>Precipitation</td>
+                        <td>🌧️ Precipitation</td>
                         <td>Total precipitation</td>
                         <td>mm</td>
-                        <td>total_precipitation</td>
+                        <td><code>total_precipitation</code></td>
                     </tr>
                     <tr>
-                        <td>Humidity</td>
+                        <td>💧 Humidity</td>
                         <td>Relative humidity (derived from dewpoint)</td>
                         <td>%</td>
-                        <td>dewpoint_temperature_2m</td>
+                        <td><code>dewpoint_temperature_2m</code></td>
                     </tr>
                     <tr>
-                        <td>Wind Speed</td>
+                        <td>💨 Wind Speed</td>
                         <td>10-meter wind speed</td>
                         <td>m/s</td>
-                        <td>u_component_of_wind_10m</td>
+                        <td><code>u_component_of_wind_10m</code></td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
-</div>
-
-<div class="row mt-4">
-    <div class="col-12">
-        <h4>API Endpoints</h4>
+    
+    <div class="card">
+        <h5 style="font-weight: 700; margin-bottom: 1rem;">
+            <i class="fas fa-plug" style="color: var(--success-color);"></i> API Endpoints
+        </h5>
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>
@@ -101,50 +119,37 @@
                 <tbody>
                     <tr>
                         <td><code>/api/map-data</code></td>
-                        <td>GET</td>
+                        <td><span style="background: rgba(16, 185, 129, 0.2); padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.875rem; font-weight: 600;">GET</span></td>
                         <td>Get GeoJSON with climate values for map visualization</td>
                     </tr>
                     <tr>
                         <td><code>/api/timeseries</code></td>
-                        <td>GET</td>
+                        <td><span style="background: rgba(16, 185, 129, 0.2); padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.875rem; font-weight: 600;">GET</span></td>
                         <td>Get time series data for a location and variable</td>
                     </tr>
                     <tr>
                         <td><code>/api/forecast</code></td>
-                        <td>GET</td>
+                        <td><span style="background: rgba(16, 185, 129, 0.2); padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.875rem; font-weight: 600;">GET</span></td>
                         <td>Get ML-based climate forecasts</td>
                     </tr>
                     <tr>
                         <td><code>/api/download</code></td>
-                        <td>POST</td>
+                        <td><span style="background: rgba(59, 130, 246, 0.2); padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.875rem; font-weight: 600;">POST</span></td>
                         <td>Download climate data in CSV or JSON format</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
-</div>
-
-<div class="row mt-4">
-    <div class="col-12">
-        <h4>Citation</h4>
-        <div class="card">
-            <div class="card-body">
-                <p class="mb-0">If you use data from this portal in your research, please cite:</p>
-                <blockquote class="blockquote mt-2">
-                    <p class="mb-0">Hersbach, H., Bell, B., Berrisford, P., et al. (2020). The ERA5 global reanalysis. Quarterly Journal of the Royal Meteorological Society, 146(730), 1999-2049. doi:10.1002/qj.3803</p>
-                </blockquote>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mt-4 mb-4">
-    <div class="col-12">
-        <div class="alert alert-info">
-            <h5><i class="fas fa-info-circle"></i> Note</h5>
-            <p class="mb-0">This application is designed for research and educational purposes. The portal works with mock data by default. To access real ERA5 climate data, configure your Google Earth Engine credentials.</p>
-        </div>
+    
+    <div class="card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1)); border: 2px solid var(--primary-color);">
+        <h5 style="font-weight: 700; margin-bottom: 1rem;">
+            <i class="fas fa-quote-left" style="color: var(--primary-color);"></i> Citation
+        </h5>
+        <p style="margin-bottom: 0.5rem;">If you use data from this portal in your research, please cite:</p>
+        <blockquote style="background: rgba(255, 255, 255, 0.7); padding: 1rem; border-radius: 10px; border-left: 4px solid var(--primary-color); margin: 0;">
+            <p style="margin: 0; font-style: italic; line-height: 1.7;">Hersbach, H., Bell, B., Berrisford, P., et al. (2020). The ERA5 global reanalysis. Quarterly Journal of the Royal Meteorological Society, 146(730), 1999-2049. doi:10.1002/qj.3803</p>
+        </blockquote>
     </div>
 </div>
 {% endblock %}

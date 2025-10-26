@@ -2,61 +2,83 @@
 
 {% block title %}Climate Forecast - Climate Portal{% endblock %}
 
-{% block content %}
-<div class="row mb-3">
-    <div class="col-12">
-        <h2>Climate Forecasts</h2>
-        <p>Machine learning-based climate predictions for the next 3 months</p>
-    </div>
-</div>
-
-<div class="row mb-3">
-    <div class="col-md-4">
-        <label for="locationSelect" class="form-label">Location</label>
+{% block sidebar_controls %}
+<div class="controls-section" style="border-top: 1px solid rgba(0,0,0,0.08);">
+    <h6 class="control-label" style="font-size: 0.875rem; margin-bottom: 1.5rem;">
+        <i class="fas fa-sliders-h"></i> Forecast Controls
+    </h6>
+    
+    <div class="control-group">
+        <label for="locationSelect" class="control-label">Location</label>
         <select id="locationSelect" class="form-select">
-            <option value="punjab">Punjab</option>
-            <option value="sindh">Sindh</option>
-            <option value="kpk">Khyber Pakhtunkhwa</option>
-            <option value="balochistan">Balochistan</option>
-            <option value="gb">Gilgit-Baltistan</option>
-            <option value="ajk">Azad Kashmir</option>
+            <option value="punjab">🏛️ Punjab</option>
+            <option value="sindh">🌆 Sindh</option>
+            <option value="kpk">⛰️ Khyber Pakhtunkhwa</option>
+            <option value="balochistan">🏜️ Balochistan</option>
+            <option value="gb">🏔️ Gilgit-Baltistan</option>
+            <option value="ajk">🌲 Azad Kashmir</option>
         </select>
     </div>
-    <div class="col-md-4">
-        <label for="variableSelect" class="form-label">Variable</label>
+    
+    <div class="control-group">
+        <label for="variableSelect" class="control-label">Climate Variable</label>
         <select id="variableSelect" class="form-select">
-            <option value="temperature">Temperature</option>
-            <option value="precipitation">Precipitation</option>
-            <option value="humidity">Humidity</option>
-            <option value="wind_speed">Wind Speed</option>
+            <option value="temperature">🌡️ Temperature</option>
+            <option value="precipitation">🌧️ Precipitation</option>
+            <option value="humidity">💧 Humidity</option>
+            <option value="wind_speed">💨 Wind Speed</option>
         </select>
     </div>
-    <div class="col-md-4">
-        <label class="form-label">&nbsp;</label>
-        <button id="updateForecast" class="btn btn-primary w-100">Generate Forecast</button>
+    
+    <div class="control-group">
+        <button id="updateForecast" class="btn btn-primary w-100">
+            <i class="fas fa-crystal-ball"></i>
+            <span>Generate Forecast</span>
+        </button>
+    </div>
+    
+    <div class="control-group" style="padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.08);">
+        <h6 class="control-label" style="font-size: 0.875rem; margin-bottom: 0.75rem;">
+            <i class="fas fa-info-circle"></i> About Forecasts
+        </h6>
+        <ul style="font-size: 0.875rem; color: var(--text-muted-light); line-height: 1.8; padding-left: 1.25rem; margin: 0;">
+            <li>3-month predictions</li>
+            <li>ML-based (Random Forest)</li>
+            <li>Historical data training</li>
+            <li>Confidence intervals</li>
+        </ul>
     </div>
 </div>
+{% endblock %}
 
-<div class="row">
-    <div class="col-12">
-        <div id="forecastChart"></div>
+{% block content_header %}
+<div class="content-header">
+    <div class="header-top">
+        <div class="header-title">
+            <h2>Climate Forecasts</h2>
+            <p class="header-subtitle">Machine learning-based climate predictions for the next 3 months</p>
+        </div>
     </div>
 </div>
+{% endblock %}
 
-<div class="row mt-3">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5>Model Information</h5>
-            </div>
-            <div class="card-body" id="modelInfo">
-                <p class="text-muted">Select a location and variable, then click "Generate Forecast" to see predictions.</p>
-            </div>
+{% block content %}
+<div style="display: flex; flex-direction: column; gap: 1.5rem; flex: 1;">
+    <div class="card" style="flex: 1; min-height: 500px;">
+        <div id="forecastChart" style="width: 100%; height: 100%;"></div>
+    </div>
+    
+    <div class="card">
+        <h6 style="font-weight: 700; margin-bottom: 1rem;">
+            <i class="fas fa-robot" style="color: var(--primary-color);"></i> Model Information
+        </h6>
+        <div id="modelInfo">
+            <p style="color: var(--text-muted-light); margin: 0;">Select a location and variable, then click "Generate Forecast" to see predictions.</p>
         </div>
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
-<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ request.url_for('static', path='js/main.js') }}"></script>
 {% endblock %}

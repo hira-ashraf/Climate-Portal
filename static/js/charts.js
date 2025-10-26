@@ -27,7 +27,7 @@ async function updateTimeSeries() {
             mode: 'lines+markers',
             name: variable,
             line: {
-                color: '#10b981',
+                color: '#0891b2',
                 width: 2
             },
             marker: {

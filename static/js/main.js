@@ -22,7 +22,7 @@ async function updateForecast() {
             mode: 'lines+markers',
             name: 'Forecast',
             line: {
-                color: '#10b981',
+                color: '#0891b2',
                 width: 3
             },
             marker: {
@@ -34,7 +34,7 @@ async function updateForecast() {
             x: [...dates, ...dates.reverse()],
             y: [...upperBounds, ...lowerBounds.reverse()],
             fill: 'toself',
-            fillcolor: 'rgba(16, 185, 129, 0.2)',
+            fillcolor: 'rgba(8, 145, 178, 0.2)',
             line: {
                 color: 'transparent'
             },

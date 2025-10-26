@@ -77,7 +77,7 @@ function highlightFeature(e) {
     
     layer.setStyle({
         weight: 3,
-        color: '#10b981',
+        color: '#0891b2',
         fillOpacity: 0.9
     });
     

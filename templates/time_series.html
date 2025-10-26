@@ -2,45 +2,46 @@
 
 {% block title %}Time Series - Climate Portal{% endblock %}
 
-{% block content %}
-<div class="row mb-3">
-    <div class="col-12">
-        <h2>Climate Time Series Analysis</h2>
-        <p>Analyze climate trends over time for different regions</p>
-    </div>
-</div>
-
-<div class="row mb-3">
-    <div class="col-md-3">
-        <label for="locationSelect" class="form-label">Location</label>
+{% block sidebar_controls %}
+<div class="controls-section" style="border-top: 1px solid rgba(0,0,0,0.08);">
+    <h6 class="control-label" style="font-size: 0.875rem; margin-bottom: 1.5rem;">
+        <i class="fas fa-sliders-h"></i> Analysis Controls
+    </h6>
+    
+    <div class="control-group">
+        <label for="locationSelect" class="control-label">Location</label>
         <select id="locationSelect" class="form-select">
-            <option value="punjab">Punjab</option>
-            <option value="sindh">Sindh</option>
-            <option value="kpk">Khyber Pakhtunkhwa</option>
-            <option value="balochistan">Balochistan</option>
-            <option value="gb">Gilgit-Baltistan</option>
-            <option value="ajk">Azad Kashmir</option>
+            <option value="punjab">🏛️ Punjab</option>
+            <option value="sindh">🌆 Sindh</option>
+            <option value="kpk">⛰️ Khyber Pakhtunkhwa</option>
+            <option value="balochistan">🏜️ Balochistan</option>
+            <option value="gb">🏔️ Gilgit-Baltistan</option>
+            <option value="ajk">🌲 Azad Kashmir</option>
         </select>
     </div>
-    <div class="col-md-3">
-        <label for="variableSelect" class="form-label">Variable</label>
+    
+    <div class="control-group">
+        <label for="variableSelect" class="control-label">Climate Variable</label>
         <select id="variableSelect" class="form-select">
-            <option value="temperature">Temperature</option>
-            <option value="precipitation">Precipitation</option>
-            <option value="humidity">Humidity</option>
-            <option value="wind_speed">Wind Speed</option>
+            <option value="temperature">🌡️ Temperature</option>
+            <option value="precipitation">🌧️ Precipitation</option>
+            <option value="humidity">💧 Humidity</option>
+            <option value="wind_speed">💨 Wind Speed</option>
         </select>
     </div>
-    <div class="col-md-2">
-        <label for="startDate" class="form-label">Start Date</label>
+    
+    <div class="control-group">
+        <label for="startDate" class="control-label">Start Date</label>
         <input type="date" id="startDate" class="form-control" value="2020-01-01">
     </div>
-    <div class="col-md-2">
-        <label for="endDate" class="form-label">End Date</label>
+    
+    <div class="control-group">
+        <label for="endDate" class="control-label">End Date</label>
         <input type="date" id="endDate" class="form-control">
     </div>
-    <div class="col-md-2">
-        <label for="aggregationSelect" class="form-label">Aggregation</label>
+    
+    <div class="control-group">
+        <label for="aggregationSelect" class="control-label">Aggregation</label>
         <select id="aggregationSelect" class="form-select">
             <option value="hourly">Hourly</option>
             <option value="daily">Daily</option>
@@ -49,24 +50,37 @@
             <option value="annual">Annual</option>
         </select>
     </div>
-    <div class="col-md-2">
-        <label class="form-label">&nbsp;</label>
-        <button id="updateChart" class="btn btn-primary w-100">Update</button>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-12">
-        <div id="timeseriesChart"></div>
-    </div>
-</div>
-
-<div class="row mt-3">
-    <div class="col-12">
-        <button id="downloadCSV" class="btn btn-success">
-            <i class="fas fa-download"></i> Download Data as CSV
+    
+    <div class="control-group">
+        <button id="updateChart" class="btn btn-primary w-100">
+            <i class="fas fa-chart-line"></i>
+            <span>Update Chart</span>
         </button>
     </div>
+    
+    <div class="control-group">
+        <button id="downloadCSV" class="btn btn-secondary w-100">
+            <i class="fas fa-download"></i>
+            <span>Download CSV</span>
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block content_header %}
+<div class="content-header">
+    <div class="header-top">
+        <div class="header-title">
+            <h2>Time Series Analysis</h2>
+            <p class="header-subtitle">Analyze climate trends over time for different regions</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card" style="flex: 1; min-height: calc(100vh - 200px);">
+    <div id="timeseriesChart" style="width: 100%; height: 100%;"></div>
 </div>
 {% endblock %}
 
@@ -74,5 +88,5 @@
 <script>
     document.getElementById('endDate').value = new Date().toISOString().split('T')[0];
 </script>
-<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script src="{{ request.url_for('static', path='js/charts.js') }}"></script>
 {% endblock %}

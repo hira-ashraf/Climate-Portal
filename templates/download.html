@@ -2,19 +2,52 @@
 
 {% block title %}Download Data - Climate Portal{% endblock %}
 
-{% block content %}
-<div class="row mb-3">
-    <div class="col-12">
-        <h2>Download Climate Data</h2>
-        <p>Export climate datasets for offline analysis (Limited to 5 downloads per hour)</p>
+{% block sidebar_controls %}
+<div class="controls-section" style="border-top: 1px solid rgba(0,0,0,0.08);">
+    <h6 class="control-label" style="font-size: 0.875rem; margin-bottom: 1.5rem;">
+        <i class="fas fa-info-circle"></i> Download Info
+    </h6>
+    
+    <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+        <h6 style="font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem;">Rate Limits</h6>
+        <p style="font-size: 0.8rem; color: var(--text-muted-light); margin: 0;">Maximum 5 downloads per hour per IP</p>
+    </div>
+    
+    <div style="background: rgba(139, 92, 246, 0.1); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+        <h6 style="font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem;">File Formats</h6>
+        <ul style="font-size: 0.8rem; color: var(--text-muted-light); margin: 0; padding-left: 1.25rem;">
+            <li>CSV: Excel/Spreadsheet</li>
+            <li>JSON: Programming/APIs</li>
+        </ul>
+    </div>
+    
+    <div style="background: rgba(6, 182, 212, 0.1); padding: 1rem; border-radius: 10px;">
+        <h6 style="font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem;">Data Columns</h6>
+        <ul style="font-size: 0.8rem; color: var(--text-muted-light); margin: 0; padding-left: 1.25rem;">
+            <li>Date</li>
+            <li>Variable</li>
+            <li>Value</li>
+            <li>Location</li>
+            <li>Units</li>
+        </ul>
     </div>
 </div>
+{% endblock %}
 
-<div class="row">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-body">
-                <form id="downloadForm">
+{% block content_header %}
+<div class="content-header">
+    <div class="header-top">
+        <div class="header-title">
+            <h2>Download Climate Data</h2>
+            <p class="header-subtitle">Export climate datasets for offline analysis</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <form id="downloadForm">
                     <div class="mb-3">
                         <label for="locationSelect" class="form-label">Location</label>
                         <select id="locationSelect" class="form-select" required>
@@ -82,42 +115,8 @@
                         <i class="fas fa-download"></i> Download Data
                     </button>
                 </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0">Download Information</h5>
-            </div>
-            <div class="card-body">
-                <h6>Rate Limits</h6>
-                <p>Maximum 5 downloads per hour per IP address</p>
-                
-                <h6>File Formats</h6>
-                <ul>
-                    <li><strong>CSV:</strong> Tabular format for Excel/spreadsheet applications</li>
-                    <li><strong>JSON:</strong> Structured format for programming/APIs</li>
-                </ul>
-
-                <h6>Data Columns</h6>
-                <ul class="mb-0">
-                    <li>Date</li>
-                    <li>Variable</li>
-                    <li>Value</li>
-                    <li>Location</li>
-                    <li>Units</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mt-3">
-    <div class="col-12">
-        <div id="downloadStatus"></div>
-    </div>
+    
+    <div id="downloadStatus" style="margin-top: 1.5rem;"></div>
 </div>
 {% endblock %}
 

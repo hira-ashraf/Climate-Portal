@@ -1,85 +1,141 @@
 {% extends "base.html" %}
 
+{% block content_header %}
+<div class="content-header">
+    <div class="header-top">
+        <div class="header-title">
+            <h2>Dashboard</h2>
+            <p class="header-subtitle">Access and analyze climate data for Pakistan with interactive visualizations</p>
+        </div>
+        <div class="header-actions">
+            <div class="stat-card" style="display: inline-block; padding: 1rem 1.5rem; margin: 0;">
+                <div class="stat-value" style="font-size: 1.25rem; margin-bottom: 0;">ERA5</div>
+                <div class="stat-label" style="font-size: 0.75rem;">Data Source</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
 {% block content %}
-<div class="row">
-    <div class="col-12 text-center mb-5">
-        <h1 class="display-4">Climate Information Portal of Pakistan</h1>
-        <p class="lead">Access and analyze climate data for Pakistan with interactive visualizations</p>
+<div class="fade-in">
+    <div class="alert alert-info">
+        <i class="fas fa-lightbulb"></i> <strong>Quick Start:</strong> The portal uses mock climate data by default. To enable real ERA5 data from Google Earth Engine, configure your GEE credentials.
     </div>
-</div>
-
-<div class="row g-4">
-    <div class="col-md-6 col-lg-4">
-        <div class="card h-100 feature-card">
-            <div class="card-body text-center">
-                <i class="fas fa-map fa-3x mb-3 text-primary"></i>
-                <h5 class="card-title">Interactive Map</h5>
-                <p class="card-text">Visualize climate data across Pakistan's provinces with color-coded choropleth maps.</p>
-                <a href="/map" class="btn btn-primary">View Map</a>
+    
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <a href="/map" class="text-decoration-none">
+                <div class="card feature-card" style="background: linear-gradient(135deg, #0c4a6e 0%, #0891b2 100%); color: white; border: none;">
+                    <div style="padding: 2rem;">
+                        <div class="feature-icon" style="background: rgba(255,255,255,0.2); margin: 0 0 1.5rem 0;">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h3 class="feature-title" style="color: white; font-size: 1.5rem;">Interactive Map Viewer</h3>
+                        <p class="feature-description" style="color: rgba(255,255,255,0.9);">Visualize climate data across Pakistan's provinces with color-coded choropleth maps powered by Google Earth Engine.</p>
+                        <div class="btn" style="background: rgba(255,255,255,0.2); color: white;">
+                            <span>Explore Map</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-lg-6">
+            <a href="/timeseries" class="text-decoration-none">
+                <div class="card feature-card" style="background: linear-gradient(135deg, #0e7490 0%, #0891b2 100%); color: white; border: none;">
+                    <div style="padding: 2rem;">
+                        <div class="feature-icon" style="background: rgba(255,255,255,0.2); margin: 0 0 1.5rem 0;">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="feature-title" style="color: white; font-size: 1.5rem;">Time Series Analysis</h3>
+                        <p class="feature-description" style="color: rgba(255,255,255,0.9);">Analyze climate trends over time with interactive charts and historical data spanning multiple years.</p>
+                        <div class="btn" style="background: rgba(255,255,255,0.2); color: white;">
+                            <span>View Trends</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+            <a href="/forecast" class="text-decoration-none">
+                <div class="card feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-crystal-ball"></i>
+                    </div>
+                    <h5 class="feature-title">Climate Forecasts</h5>
+                    <p class="feature-description">View 3-month ahead climate predictions using machine learning models.</p>
+                    <button class="btn btn-primary w-100">View Forecasts</button>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-6 col-lg-4">
+            <a href="/download" class="text-decoration-none">
+                <div class="card feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #d97706, #dc2626);">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <h5 class="feature-title">Data Download</h5>
+                    <p class="feature-description">Download climate datasets in CSV or JSON format for offline analysis.</p>
+                    <button class="btn btn-primary w-100">Download Data</button>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-6 col-lg-4">
+            <div class="card feature-card">
+                <div class="feature-icon" style="background: linear-gradient(135deg, #0891b2, #0c4a6e);">
+                    <i class="fas fa-thermometer-half"></i>
+                </div>
+                <h5 class="feature-title">Climate Variables</h5>
+                <p class="feature-description">Temperature, precipitation, humidity, and wind speed data from ERA5 reanalysis.</p>
             </div>
         </div>
     </div>
-
-    <div class="col-md-6 col-lg-4">
-        <div class="card h-100 feature-card">
-            <div class="card-body text-center">
-                <i class="fas fa-chart-line fa-3x mb-3 text-success"></i>
-                <h5 class="card-title">Time Series Analysis</h5>
-                <p class="card-text">Analyze climate trends over time with interactive charts and historical data.</p>
-                <a href="/timeseries" class="btn btn-success">Analyze Trends</a>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <h5 style="margin-bottom: 1rem; font-weight: 700;">
+                    <i class="fas fa-database" style="color: var(--primary-color);"></i> Available Climate Data
+                </h5>
+                <div class="row g-3">
+                    <div class="col-md-3 col-sm-6">
+                        <div style="padding: 1rem; background: rgba(12, 74, 110, 0.1); border-radius: 12px; text-align: center;">
+                            <i class="fas fa-temperature-high" style="font-size: 1.5rem; color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                            <div style="font-weight: 600;">Temperature</div>
+                            <small style="color: var(--text-muted-light);">Min, Max, Mean</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div style="padding: 1rem; background: rgba(8, 145, 178, 0.1); border-radius: 12px; text-align: center;">
+                            <i class="fas fa-cloud-rain" style="font-size: 1.5rem; color: var(--secondary-color); margin-bottom: 0.5rem;"></i>
+                            <div style="font-weight: 600;">Precipitation</div>
+                            <small style="color: var(--text-muted-light);">Daily, Monthly</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div style="padding: 1rem; background: rgba(14, 116, 144, 0.1); border-radius: 12px; text-align: center;">
+                            <i class="fas fa-tint" style="font-size: 1.5rem; color: var(--accent-color); margin-bottom: 0.5rem;"></i>
+                            <div style="font-weight: 600;">Humidity</div>
+                            <small style="color: var(--text-muted-light);">Relative %</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div style="padding: 1rem; background: rgba(5, 150, 105, 0.1); border-radius: 12px; text-align: center;">
+                            <i class="fas fa-wind" style="font-size: 1.5rem; color: var(--success-color); margin-bottom: 0.5rem;"></i>
+                            <div style="font-weight: 600;">Wind Speed</div>
+                            <small style="color: var(--text-muted-light);">m/s</small>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 col-lg-4">
-        <div class="card h-100 feature-card">
-            <div class="card-body text-center">
-                <i class="fas fa-crystal-ball fa-3x mb-3 text-info"></i>
-                <h5 class="card-title">Climate Forecasts</h5>
-                <p class="card-text">View 3-month ahead climate predictions using machine learning models.</p>
-                <a href="/forecast" class="btn btn-info">View Forecasts</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 col-lg-4">
-        <div class="card h-100 feature-card">
-            <div class="card-body text-center">
-                <i class="fas fa-download fa-3x mb-3 text-warning"></i>
-                <h5 class="card-title">Data Download</h5>
-                <p class="card-text">Download climate datasets in CSV or JSON format for offline analysis.</p>
-                <a href="/download" class="btn btn-warning">Download Data</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 col-lg-4">
-        <div class="card h-100 feature-card">
-            <div class="card-body text-center">
-                <i class="fas fa-thermometer-half fa-3x mb-3 text-danger"></i>
-                <h5 class="card-title">Climate Variables</h5>
-                <p class="card-text">Temperature, precipitation, humidity, and wind speed data from ERA5 reanalysis.</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 col-lg-4">
-        <div class="card h-100 feature-card">
-            <div class="card-body text-center">
-                <i class="fas fa-info-circle fa-3x mb-3 text-secondary"></i>
-                <h5 class="card-title">Documentation</h5>
-                <p class="card-text">Learn about the data sources, methodology, and how to use the portal.</p>
-                <a href="/about" class="btn btn-secondary">Learn More</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mt-5">
-    <div class="col-12">
-        <div class="alert alert-info">
-            <h5><i class="fas fa-lightbulb"></i> Quick Start</h5>
-            <p class="mb-0">The portal uses mock climate data by default. To enable real ERA5 data from Google Earth Engine, configure your GEE credentials in the secrets.</p>
         </div>
     </div>
 </div>
